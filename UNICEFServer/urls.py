@@ -1,6 +1,9 @@
 from django.conf.urls import patterns, include, url
 
 from django.contrib import admin
+
+import GeoServer
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -9,4 +12,10 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^send/$', GeoServer.views.send),
+    url(r'^recieve/$', GeoServer.views.recieve),  # Pass a text message to the processing server
+    url(r'^check/$', GeoServer.views.check),
+
+
+
 )
