@@ -10,8 +10,8 @@ class MobileUser(models.Model):
     location_updated = models.DateTimeField()
 
 
-    def __unicode__(self):
-        return 'name: {} mobile: {} user_type: {} location: {}'.format(name, mobile, user_type, location)
+    #def __unicode__(self):
+     #   return 'name: {} mobile: {} user_type: {} location: {}'.format(name, mobile, user_type, location)
 
 class Message(models.Model):
     raw = models.CharField(max_length=500)
