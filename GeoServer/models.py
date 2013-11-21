@@ -16,6 +16,7 @@ class MobileUser(models.Model):
 
 class Message(models.Model):
     # processed = models.BooleanField()
+    sender = = models.ForeignKey(MobileUser)
     raw = models.CharField(max_length=500)
     tag = models.CharField(max_length=10)
     message_body = models.CharField(max_length=10)

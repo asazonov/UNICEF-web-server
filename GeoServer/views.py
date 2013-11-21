@@ -36,6 +36,12 @@ def receive(request):
     if request.method == 'POST':
         data = toDict(request.POST)
         pm = parser.parseMessage(data["sms_string"])
+        phone_number = str(data["phone_number"])
+
+        mobile_user = MobileUser.objects.get(mobile = phone_number)
+        if mobile_user is None:
+            return HttpResponse(401)
+
         message = pm.getMessage()
         tag = pm.getTag()
         raw_location = pm.getLocationDescriptor()
@@ -52,7 +58,7 @@ def receive(request):
             place_country = place.split(', ')[-1]
             if place_country != unicode('South Sudan'):
                 raise TypeError()
-            newMessage = Message(
+            new_message = Message(
                 raw = data,
                 tag = tag,
                 message_body = message,
@@ -62,10 +68,13 @@ def receive(request):
                 latitude = lat,
                 longitude = lng
             )
+            mobile_user.location = new_message.location
+            mobile_user.latitude = new_message.latitude
+            mobile_user.longitude = new_message.longitude
         except TypeError:
             location_defined = False
             place = raw_location
-            newMessage = Message(
+            new_message = Message(
                 raw = data,
                 tag = tag,
                 message_body = message,
@@ -75,7 +84,9 @@ def receive(request):
             )
 
 
-        newMessage.save()
+        new_message.save()
+
+
         print pm
     return HttpResponse(200)
 
