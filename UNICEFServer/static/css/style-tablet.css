@@ -1,0 +1,11 @@
+/* Tablet Stylesheet for Unicef Hackathon Project */
+
+/* Modify container width to 100% */
+#container{
+	width:auto;
+}
+
+/* increase the site of navigation buttons */
+#nav .item{
+	height:70px;
+	}
