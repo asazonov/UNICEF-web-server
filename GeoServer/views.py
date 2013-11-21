@@ -1,6 +1,6 @@
 from django.shortcuts import render
-
 from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
 
 import json
 
@@ -24,5 +24,7 @@ def check(request):
 @csrf_exempt
 def receive(request):
     if request.method == 'POST':
-        data = request.POST
+        data = dict(request.POST.iterlists())
         print data
+    return HttpResponse(200)
+
