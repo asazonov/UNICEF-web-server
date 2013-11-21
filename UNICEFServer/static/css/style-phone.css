@@ -1,0 +1,36 @@
+/* Tablet Stylesheet for Unicef Hackathon Project */
+
+/* Modify container width to 100%, remove padding*/
+#container{
+	width:auto;
+	padding:0px;
+}
+
+/* remove header fixed height*/
+#header{
+	background:#fff;
+	height:auto;
+	text-align:center;
+}
+
+/* let the nav sit where it should */
+#nav{
+	position:relative;
+	margin:10px;
+}
+
+#nav .item{
+	width:auto;
+	padding:10px 5px;
+	background:#ccc;
+}
+
+/* Separate our left sidebar to be above the map */
+#leftsidebar{
+	float:none;
+	width:auto;
+}
+
+#mapoutput{
+	margin-left:0px;
+}

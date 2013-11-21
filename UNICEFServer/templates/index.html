@@ -1,0 +1,58 @@
+{% load staticfiles %}
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<!-- META -->
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	
+	<!-- Stylesheets -->
+	<link type="text/css" rel="stylesheet" href="{% static 'css/style.css' %}"/>
+	<link type="text/css" rel="stylesheet" href="{% static 'css/style-tablet.css' %}" media="screen and (max-width: 900px) and (min-width: 671px)"/>
+	<link type="text/css" rel="stylesheet" href="{% static 'css/style-phone.css' %}" media="screen and (max-width: 670px)"/>
+	
+	<!-- JQuery -->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	
+	<!-- Leaflet.js -->
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+	<!--[if lte IE 8]>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
+	<![endif]-->
+	<script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+	
+	<!-- js-inbox.js -->
+	<script src="{% static 'js/js-inbox.js' %}"></script>
+</head>
+<body>
+	<div id="container">
+		<div id="header">
+			<img id="logo" src="{% static 'images/logo.png' %}"/>
+			
+			<div id="nav">
+				<a class="item" href="#">Inbox</a>
+				<a class="item" href="#">Map</a>
+				<a class="item" href="#">Compose</a>
+				<a class="item" href="#">Enroll</a>
+			</div><!-- /#nav -->
+		</div><!-- /#header -->
+		
+		<div id="content">
+			
+			<div id="leftsidebar">
+			<h1>Inbox</h1>
+			<p>Jello</p>
+			</div>
+			
+			<div id="mapoutput">
+			</div>
+			
+		</div><!-- /#content -->
+		
+		<div id="footer">
+			Footer text here.
+		</div><!-- Footer -->
+	</div><!-- /#container -->
+</body>
+</html>
