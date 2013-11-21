@@ -14,7 +14,15 @@ def send(request):
 
 
 @csrf_exempt
-def recieve(request):
+def check(request):
+
+    if request.method == 'POST':
+        data = request.POST['data']
+        print data
+
+
+@csrf_exempt
+def receive(request):
     """The methods for the registration of a multiple user"""
     if request.method == 'POST':
 

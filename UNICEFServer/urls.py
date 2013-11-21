@@ -13,7 +13,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^send/$', GeoServer.views.send),
-    url(r'^recieve/$', GeoServer.views.recieve),  # Pass a text message to the processing server
+    url(r'^receive/$', GeoServer.views.receive),  # Pass a text message to the processing server
     url(r'^check/$', GeoServer.views.check),
 
 
