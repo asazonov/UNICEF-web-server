@@ -4,10 +4,12 @@ from django.http import HttpResponse
 from models import Message, MobileUser
 
 import pprint
-import json
+import parser
 from geopy import geocoders
 from datetime import datetime
-import parser
+
+POST = 'POST'
+SOUTH_SUDAN = 'South Sudan'
 
 def toDict(queryDict):
 	data = dict(queryDict)
@@ -17,23 +19,21 @@ def toDict(queryDict):
 
 @csrf_exempt
 def send(request):
-
-    if request.method == 'POST':
+    if request.method == POST:
         data = request.POST['data']
         print data
 
 
 @csrf_exempt
 def check(request):
-
-    if request.method == 'POST':
+    if request.method == POST:
         data = request.POST['data']
         print data
 
 
 @csrf_exempt
 def receive(request):
-    if request.method == 'POST':
+    if request.method == POST:
         data = toDict(request.POST)
         pm = parser.parseMessage(data["sms_string"])
         phone_number = str(data["phone_number"])
@@ -53,10 +53,10 @@ def receive(request):
 
         try:
             place, (lat, lng) = geocoder.geocode(
-                raw_location + ', South Sudan'
+                raw_location + ', ' + SOUTH_SUDAN
             )
             place_country = place.split(', ')[-1]
-            if place_country != unicode('South Sudan'):
+            if place_country != unicode(SOUTH_SUDAN):
                 raise TypeError()
             new_message = Message(
                 raw = data,
@@ -68,9 +68,10 @@ def receive(request):
                 latitude = lat,
                 longitude = lng
             )
-            mobile_user.location = new_message.location
-            mobile_user.latitude = new_message.latitude
-            mobile_user.longitude = new_message.longitude
+            mobile_user.location = place
+            mobile_user.longitude = lng
+            mobile_user.latitude = lat
+            mobile_user.location_updated = new_message.message_time
         except TypeError:
             location_defined = False
             place = raw_location
@@ -85,8 +86,6 @@ def receive(request):
 
 
         new_message.save()
-
-
-        print pm
+        pprint.pprint(pm)
     return HttpResponse(200)
 
