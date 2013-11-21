@@ -35,8 +35,7 @@ def check(request):
 def receive(request):
     if request.method == 'POST':
         data = toDict(request.POST)
-        pm = parseMessage(data)
-        
+        pm = parser.parseMessage(data["sms_string"])
         message = pm.getMessage()
         tag = pm.getTag()
         raw_location = pm.getLocationDescriptor()
@@ -44,29 +43,38 @@ def receive(request):
         location_defined = True
         lat = None
         lng = None
+        place = None
 
         try:
-        	place, (lat, lng) = geocoder.geocode(
-        		raw_location + ', South Sudan'
-        	)
-        	place_country = place.split(', ')[-1]
-        	if place_country != unicode('South Sudan'):
-        		raise TypeError() 
+            place, (lat, lng) = geocoder.geocode(
+                raw_location + ', South Sudan'
+            )
+            place_country = place.split(', ')[-1]
+            if place_country != unicode('South Sudan'):
+                raise TypeError()
+            newMessage = Message(
+                raw = data,
+                tag = tag,
+                message_body = message,
+                message_time = datetime.now(),
+                location = place,
+                location_defined = location_defined,
+                latitude = lat,
+                longitude = lng
+            )
         except TypeError:
-        	location_defined = False
-        	place = raw_location
+            location_defined = False
+            place = raw_location
+            newMessage = Message(
+                raw = data,
+                tag = tag,
+                message_body = message,
+                message_time = datetime.now(),
+                location = place,
+                location_defined = location_defined
+            )
 
 
-        newMessage = Message(
-        	raw = data,
-        	tag = tag,
-        	message_body = message,
-        	message_time = datetime.now(),
-        	location = place,
-        	location_defined = location_defined,
-        	longitude = lng,
-        	latitude = lat,
-        )
         newMessage.save()
         print pm
     return HttpResponse(200)
