@@ -5,13 +5,20 @@ tags = [
     "general",
     "danger",
     "local",
-    "update"
+    "update",
+    "message"
 ]
 
 localityReferences = [
     "near",
     "around",
     "at"
+]
+
+messageRecipients = [
+    "teachers",
+    "students",
+    "everybody"
 ]
 
 def formatText(text):
@@ -28,19 +35,27 @@ def parseMessage(incomingMessage):
     if words[0] in tags:
         pMessage.setTag(words[0])
         messageStr = str()
-        for i, word in enumerate(words[1:]):
-            if word in localityReferences:
-                try:
-                    locationDescriptor = " ".join(words[i + 2:])
-                    if not locationDescriptor.rstrip().lstrip() == "":
-                        pMessage.setLocationDescriptor(locationDescriptor)
-                except IndexError:
-                    pass
-                break
+        if pMessage.getTag() == "message":
+            if words[1] in messageRecipients:
+                pMessage.setMessageRecipients(words[1])
+                pMessage.setMessage(" ".join(words[2:]))
+                return pMessage
             else:
-                messageStr += word + " "
-        pMessage.setMessage(messageStr)
-        return pMessage
+                return None
+        else:
+            for i, word in enumerate(words[1:]):
+                if word in localityReferences:
+                    try:
+                        locationDescriptor = " ".join(words[i + 2:])
+                        if not locationDescriptor.rstrip().lstrip() == "":
+                            pMessage.setLocationDescriptor(locationDescriptor)
+                    except IndexError:
+                        pass
+                    break
+                else:
+                    messageStr += word + " "
+            pMessage.setMessage(messageStr)
+            return pMessage
     else:
         return None
 
@@ -50,6 +65,7 @@ class ParsedMessage(object):
         self.tag = None
         self.message = None
         self.locationDescriptor = None
+        self.messageRec = None
 
     def setTag(self, tag):
         self.tag = tag
@@ -57,6 +73,10 @@ class ParsedMessage(object):
 
     def setMessage(self, message):
         self.message = message
+        return self
+
+    def setMessageRecipients(self, messageRec):
+        self.messageRec = messageRec
         return self
 
     def setLocationDescriptor(self, locationDescriptor):
@@ -69,6 +89,9 @@ class ParsedMessage(object):
     def getMessage(self):
         return self.message
 
+    def getMessageRecipients(self):
+        return self.messageRec
+
     def getLocationDescriptor(self):
         return self.locationDescriptor
 
@@ -76,17 +99,18 @@ class ParsedMessage(object):
         return (
             "Tag: " + self.tag + "\n" +
             "Message: " + str(self.message) + "\n" +
-            "Location Descriptor: " + str(self.locationDescriptor)
+            "Location Descriptor: " + str(self.locationDescriptor) + "\n" +
+            "Message Recipients: " + str(self.messageRec)
         )
 
 """ Test Functions """
 def test_parseMessage():
-    message = (
-        "danger there is a rebel army " +
-        "coming this way near the awesome village"
-    )
+    # message = (
+    #     "danger there is a rebel army " +
+    #     "coming this way near the awesome village"
+    # )
 
-    # message = "local hey everybody near"
+    message = "message students hey everybody"
     print "Message:", message
     pm = parseMessage(message)
     print pm
