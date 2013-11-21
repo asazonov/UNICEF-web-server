@@ -1,5 +1,5 @@
 """
-Django settings for GeoServer project.
+Django settings for UNICEFServer project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '6(o*#18wy0%w0+g*tiu1xf!(1l9%@c0g6tx+cx9uohpcehb$p9'
+SECRET_KEY = 'o8e1h+h^7=dof-=b8p3yz6@b$)vu1iv23lmr&(#&xl54m19o@l'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -25,6 +25,7 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
+
 
 # Application definition
 
@@ -35,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'GeoServer'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -46,13 +48,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'templates').replace('\\','/'),
-)
+ROOT_URLCONF = 'UNICEFServer.urls'
 
-ROOT_URLCONF = 'GeoServer.urls'
-
-WSGI_APPLICATION = 'GeoServer.wsgi.application'
+WSGI_APPLICATION = 'UNICEFServer.wsgi.application'
 
 
 # Database

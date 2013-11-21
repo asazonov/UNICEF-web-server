@@ -1,2 +1,0 @@
-UNICEF-sms-server
-=================
