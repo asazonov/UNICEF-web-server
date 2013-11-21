@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from GeoServer.models import *
+
+admin.site.register(MobileUser)
+admin.site.register(Message)
+
+
