@@ -36,11 +36,17 @@ def receive(request):
     if request.method == POST:
         data = toDict(request.POST)
         pm = parser.parseMessage(data["sms_string"])
+
+        if pm is None:
+            return HttpResponse("Not working bro")
+
         phone_number = str(data["phone_number"])
 
-        mobile_user = MobileUser.objects.get(mobile = phone_number)
-        if mobile_user is None:
-            return HttpResponse(401)
+        try:
+            mobile_user = MobileUser.objects.get(mobile = phone_number)
+        except MobileUser.DoesNotExistError:
+            print "Exception:", e
+            return HttpResponse("Dude, are you a rebel?")
 
         message = pm.getMessage()
         tag = pm.getTag()
@@ -60,6 +66,7 @@ def receive(request):
                 raise TypeError()
             new_message = Message(
                 raw = data,
+                sender = mobile_user,
                 tag = tag,
                 message_body = message,
                 message_time = datetime.now(),
@@ -72,6 +79,7 @@ def receive(request):
             mobile_user.longitude = lng
             mobile_user.latitude = lat
             mobile_user.location_updated = new_message.message_time
+            mobile_user.save()
         except TypeError:
             location_defined = False
             place = raw_location
@@ -86,6 +94,6 @@ def receive(request):
 
 
         new_message.save()
-        pprint.pprint(pm)
+        print pm
     return HttpResponse(200)
 

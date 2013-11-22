@@ -22,6 +22,10 @@ messageRecipients = [
 ]
 
 def formatText(text):
+    """
+    Formats the text to a parseable string
+    """
+
     text = str(text)
     text = text.lower().rstrip().lstrip()
     for punc in string.punctuation:
@@ -29,6 +33,10 @@ def formatText(text):
     return text
 
 def parseMessage(incomingMessage):
+    """
+    Parses a message into tags, locations, and sending messages
+    """
+
     formattedMessage = formatText(incomingMessage)
     words = formattedMessage.split(" ")
     pMessage = ParsedMessage()
