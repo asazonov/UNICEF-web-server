@@ -5,11 +5,13 @@ from models import Message, MobileUser
 
 import pprint
 import parser
+import json
 from geopy import geocoders
 from datetime import datetime
 
 POST = 'POST'
 SOUTH_SUDAN = 'South Sudan'
+TO_SEND = True
 
 def toDict(queryDict):
 	data = dict(queryDict)
@@ -19,17 +21,23 @@ def toDict(queryDict):
 
 @csrf_exempt
 def send(request):
-    if request.method == POST:
-        data = request.POST['data']
-        print data
+    if request.method == "GET":
+        if TO_SEND:
+        	return HttpResponse(
+        		json.dumps({
+        			'numbers': ["+447926677745", "+447582733198"],
+        			'message': "balls and tits with fuck"
+        		})
+        	)
 
 
 @csrf_exempt
 def check(request):
-    if request.method == POST:
-        data = request.POST['data']
-        print data
-
+    if request.method == "GET":
+    	return str(TO_SEND)
+    	# if process():
+     # 		return str(True)
+     # 	else return str(False)
 
 @csrf_exempt
 def receive(request):
@@ -52,7 +60,6 @@ def receive(request):
         tag = pm.getTag()
         raw_location = pm.getLocationDescriptor()
         geocoder = geocoders.GoogleV3()
-        location_defined = True
         lat = None
         lng = None
         place = None
@@ -65,13 +72,14 @@ def receive(request):
             if place_country != unicode(SOUTH_SUDAN):
                 raise TypeError()
             new_message = Message(
+            	processed = False
                 raw = data,
                 sender = mobile_user,
                 tag = tag,
                 message_body = message,
                 message_time = datetime.now(),
                 location = place,
-                location_defined = location_defined,
+                location_defined = True,
                 latitude = lat,
                 longitude = lng
             )
@@ -81,19 +89,24 @@ def receive(request):
             mobile_user.location_updated = new_message.message_time
             mobile_user.save()
         except TypeError:
-            location_defined = False
             place = raw_location
             new_message = Message(
+            	processed = False
                 raw = data,
                 tag = tag,
                 message_body = message,
                 message_time = datetime.now(),
                 location = place,
-                location_defined = location_defined
+                location_defined = False
             )
-
 
         new_message.save()
         print pm
     return HttpResponse(200)
 
+def process():
+	try:
+		message = Message.objects.filter(processed = False)
+		return True
+    except Message.DoesNotExistError:
+    	return False

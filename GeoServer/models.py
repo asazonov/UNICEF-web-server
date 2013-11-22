@@ -15,7 +15,7 @@ class MobileUser(models.Model):
      #   return 'name: {} mobile: {} user_type: {} location: {}'.format(name, mobile, user_type, location)
 
 class Message(models.Model):
-    # processed = models.BooleanField()
+    processed = models.BooleanField()
     sender = models.ForeignKey(MobileUser)
     raw = models.CharField(max_length=500)
     tag = models.CharField(max_length=10)
