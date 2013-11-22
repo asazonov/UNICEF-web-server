@@ -14,10 +14,9 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^send/$', GeoServer.views.send),
-    url(r'^receive/$', GeoServer.views.receive),  # Pass a text message to the processing server
+    url(r'^receive/$', GeoServer.views.receive),
     url(r'^check/$', GeoServer.views.check),
     url(r'^$', UNICEFServer.views.index),
-
-
-
-)
+    url(r'^get_messages/$', GeoServer.views.getMessages),
+    url(r'^get_users/$', GeoServer.views.getUsers),
+    )

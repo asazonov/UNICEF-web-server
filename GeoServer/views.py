@@ -8,6 +8,7 @@ import parser
 import json
 from geopy import geocoders
 from datetime import datetime
+import time
 
 POST = 'POST'
 SOUTH_SUDAN = 'South Sudan'
@@ -18,6 +19,58 @@ def toDict(queryDict):
 	for key in data:
 		data[key] = data[key][0]
 	return data
+
+@csrf_exempt
+def getMessages(request):
+    """
+    Gets all of the messages from the database and converts them
+    to JSON with the associated metadata
+    """
+
+    messages = Message.objects.all()
+    if not messages.exists:
+        return HttpResponse("{}")
+
+    #print messages
+    if request.method == "GET":
+        retList = list()
+        for message in messages:
+            retList.append({
+                "tag": message.tag,
+                "location": message.location,
+                "latitude": message.latitude,
+                "longitude": message.longitude,
+                "time_stamp": time.mktime(message.message_time.timetuple()),
+                "body": message.message_body,
+                "sender_name": message.sender.name,
+                "sender_mobile": message.sender.mobile,
+                "processed": message.processed
+            })
+
+        return HttpResponse(json.dumps(retList))
+
+@csrf_exempt
+def getUsers(request):
+    users = MobileUser.objects.all()
+    if not users.exists:
+        return HttpResponse("{}")
+
+    if request.method == "GET":
+        retList = list()
+        for user in users:
+            retList.append({
+                "mobile": user.mobile,
+                "name": user.name,
+                "user_type": user.user_type,
+                "location": user.location,
+                "longitude": user.longitude,
+                "latitude": user.latitude,
+                "last_updated": time.mktime(
+                    user.location_updated.timetuple()
+                )
+            })
+
+        return HttpResponse(json.dumps(retList))
 
 @csrf_exempt
 def send(request):
@@ -34,7 +87,7 @@ def send(request):
 @csrf_exempt
 def check(request):
     if request.method == "GET":
-        return HttpResponse(str(TO_SEND).lower())
+        return HttpResponse(str(not TO_SEND).lower())
     	# if process():
      # 		return str(True)
      # 	else return str(False)
@@ -52,7 +105,7 @@ def receive(request):
 
         try:
             mobile_user = MobileUser.objects.get(mobile = phone_number)
-        except MobileUser.DoesNotExistError:
+        except Exception as e:
             print "Exception:", e
             return HttpResponse("Dude, are you a rebel?")
 
