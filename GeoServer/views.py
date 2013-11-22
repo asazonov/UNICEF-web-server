@@ -41,8 +41,8 @@ def getMessages(request):
                 "location": message.location,
                 "latitude": message.latitude,
                 "longitude": message.longitude,
-                "time_stamp": time.mktime(message.message_time.timetuple()),
-                "body": message.message_body,
+                "time_stamp": time.mktime(message.time.timetuple()),
+                "body": message.body,
                 "sender_name": message.sender.name,
                 "sender_mobile": message.sender.mobile,
                 "processed": message.processed
@@ -128,34 +128,35 @@ def receive(request):
                     raw = data,
                     sender = mobile_user,
                     tag = tag,
-                    message_recipient = msgRec,
-                    message_body = message,
-                    message_time = datetime.now(),
+                    recipient = msgRec,
+                    body = message,
+                    time = datetime.now(),
                     location = place,
                     location_defined = True,
                     latitude = lat,
                     longitude = lng
                 )
             else:
-                new_message = Message(
-                    processed = False,
-                    raw = data,
-                    sender = mobile_user,
-                    tag = tag,
-                    message_body = message,
-                    message_time = datetime.now(),
-                    location = place,
-                    location_defined = True,
-                    latitude = lat,
-                    longitude = lng
-                )
-
-
+                if tag is not 'update':
+	                new_message = Message(
+	                    processed = False,
+	                    raw = data,
+	                    sender = mobile_user,
+	                    tag = tag,
+	                    body = message,
+	                    time = datetime.now(),
+	                    location = place,
+	                    location_defined = True,
+	                    latitude = lat,
+	                    longitude = lng
+	                )
             mobile_user.location = place
             mobile_user.longitude = lng
             mobile_user.latitude = lat
-            mobile_user.location_updated = new_message.message_time
+            mobile_user.location_updated = new_message.time
             mobile_user.save()
+            if tag is 'update':
+            	return HttpResponse(200)
         except TypeError:
             place = raw_location
             msgRec = pm.getMessageRecipients()
@@ -164,9 +165,9 @@ def receive(request):
                     processed = False,
                     raw = data,
                     tag = tag,
-                    message_recipient = pm.getMessageRecipients(),
-                    message_body = message,
-                    message_time = datetime.now(),
+                    recipient = pm.getMessageRecipients(),
+                    body = message,
+                    time = datetime.now(),
                     location = place,
                     location_defined = False
                 )
@@ -175,13 +176,11 @@ def receive(request):
                     processed = False,
                     raw = data,
                     tag = tag,
-                    message_body = message,
-                    message_time = datetime.now(),
+                    body = message,
+                    time = datetime.now(),
                     location = place,
                     location_defined = False
                 )
-
-
         new_message.save()
         print pm
     return HttpResponse(200)
@@ -198,7 +197,7 @@ def process():
 		    message.save()
 		    send_to = []
 
-		    message_location = Point(message.latitude, message.longitude)
+		    location = Point(message.latitude, message.longitude)
 
 		    if message.latitude is "" and message.longitude is "":
 		        if(message.tag == "danger"):
@@ -208,31 +207,31 @@ def process():
 		    elif message.tag == "danger":
 		        for user in all_users:
 		            user_location = Point(user.latitude, user.longitude)
-		            if within_distance(user_location,message_location,15):
+		            if within_distance(user_location,location,15):
 		                send_to.append(user.mobile)
 
 		    elif message.tag == "local":
 		        for user in all_users:
 		            user_location = Point(user.latitude, user.longitude)
-		            if within_distance(user_location,message_location,3):
+		            if within_distance(user_location,location,3):
 		                send_to.append(user.mobile)
 
-		    elif message.tag == "teachers" and message.sender.user_type == "teacher":
+		    elif message.recipient == "teachers" and message.sender.user_type == "teacher":
 		        teachers = MobileUser.objects.filter(user_type = "teacher")
 		        for teacher in teachers:
 		            user_location = Point(teacher.latitude, teacher.longitude)
-		            if within_distance(user_location,message_location, 10):
+		            if within_distance(user_location,location, 10):
 		                send_to.append(teacher.mobile)
 
-		    elif message.tag == "students" and message.sender.user_type == "teacher":
+		    elif message.recipient == "students" and message.sender.user_type == "teacher":
 		        students = MobileUser.objects.filter(user_type = "student")
 		        for student in students:
 		            user_location = Point(student.latitude, student.longitude)
-		            if within_distance(user_location,message_location, 10):
+		            if within_distance(user_location,location, 10):
 		                send_to.append(student.mobile)
 
 		    if len(send_to) > 0:
-		        msg = {'numbers': send_to, 'message': message.message_body + " @" + message.location}
+		        msg = {'numbers': send_to, 'message': message.body + " @" + message.location}
 		        MESSAGES_TO_SEND.append(msg)
 
 		    return True
@@ -242,5 +241,5 @@ def within_distance(p1, p2, d):
     if distance.distance(p1,p2).kilometers <= d:
         return True
     else:
-        False
+        return False
 
