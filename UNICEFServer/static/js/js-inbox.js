@@ -3,7 +3,7 @@ var map;
 function renderInbox(data) {
     // Map options
     var mapOptions = {
-          center: new google.maps.LatLng(4.8380, 31.5842),
+        center: new google.maps.LatLng(4.8380, 31.5842),
           zoom: 12
         };
 	
@@ -17,7 +17,14 @@ function renderInbox(data) {
 	    // Is there a location associated?
 	    if(value.latitude){
 	        // Yes
-	        iconurl = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld='+i+'|FF0000|000000',
+	        //
+	        iconcolour = '666666';
+	        if(value.tag=="danger"){
+	            iconcolour = 'FF0000';
+            }else if(value.tag=="local"){
+                iconcolour = 'FF9900';
+            }
+	        iconurl = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld='+i+'|'+iconcolour+'|000000',
             new google.maps.Marker({
                 icon:iconurl, 
                 position: new google.maps.LatLng(value.latitude,value.longitude),
@@ -51,9 +58,17 @@ function renderInbox(data) {
 
         htmltoinsert += '</div>';
 
-        $('#leftsidebar').append(htmltoinsert);
+        $('#leftsidebar').prepend(htmltoinsert);
 
 	});
+
+	// Now apply the click function
+	$('#leftsidebar div').click(function(){
+	    if($(this).attr('lat')){
+	        map.setCenter(new google.maps.LatLng($(this).attr('lat'),$(this).attr('long')));
+	        map.setZoom(14);
+        }
+    });
 }
 
 function getInbox(){
@@ -91,16 +106,7 @@ title:"Hello World2!"
 
 	  }
 
-window.onload = function() {
-    $('#leftsidebar').click(function(){
-        console.log(this);
-    if($(this).attr('lat')!=null){
-        newCenter = new google.maps.LatLng($(this).attr('lat'),$(this).attr('long'));
-        map.setCenter(newCenter);
-        map.setZoom(14);
-    }
-    });
-}
+
 
 function makeInfoWindowEvent(map, infowindow, contentString, marker) {
     google.maps.event.addListener(marker, 'click', function() {
@@ -116,4 +122,8 @@ $(document).ready(function(){
 	        getInbox()
 	    }, 1000
 	);
+
+	$('#leftsidebar div').click(function(){
+	    console.log(this);
+    });
 });

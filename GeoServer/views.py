@@ -9,11 +9,12 @@ import json
 from geopy import geocoders, Point, distance
 from datetime import datetime
 import time
+import pdb
 
 POST = 'POST'
 SOUTH_SUDAN = 'South Sudan'
 
-MESSAGES_TO_SEND = []
+MESSAGES_TO_SEND = list()
 
 def toDict(queryDict):
 	data = dict(queryDict)
@@ -73,13 +74,15 @@ def getUsers(request):
 
         return HttpResponse(json.dumps(retList))
 
-@csrf_exempt
 def send(request):
+    global MESSAGES_TO_SEND
     if request.method == "GET":
-        resp = HttpResponse(
-            json.dumps(MESSAGES_TO_SEND)
-        )
+        msgToSend = list()
+        msgToSend.extend(MESSAGES_TO_SEND)
         MESSAGES_TO_SEND = list()
+        resp = HttpResponse(
+            json.dumps(msgToSend)
+        )
         return resp
 
 
@@ -158,6 +161,8 @@ def receive(request):
             if tag == 'update':
             	return HttpResponse(200)
         except TypeError:
+            if raw_location == None:
+                raw_location = ""
             place = raw_location
             msgRec = pm.getMessageRecipients()
             if msgRec:
@@ -188,61 +193,70 @@ def receive(request):
     return HttpResponse(200)
 
 def process():
-		messages = Message.objects.filter(processed = False)
-		if not messages.exists():
-		    return False
+    messages = Message.objects.filter(processed = False)
+    if not messages.exists():
+        return False
 
-		all_users = MobileUser.objects.all()
+    all_users = MobileUser.objects.all()
 
-		for message in messages:
-		    message.processed = True
-		    message.save()
-		    send_to = []
+    for message in messages:
+        message.processed = True
+        message.save()
+        send_to = []
 
-		    location = Point(message.latitude, message.longitude)
+        location = Point(message.latitude, message.longitude)
 
-		    if message.latitude == "" and message.longitude == "":
-		        if(message.tag == "danger"):
-		            send_to = map(lambda user: user.mobile, all_users)
-		            #do something with send_to
+        if message.latitude == "" and message.longitude == "":
+            if(message.tag == "danger"):
+                send_to = map(lambda user: user.mobile, all_users)
+                #do something with send_to
 
-		    elif message.tag == "danger":
-		        for user in all_users:
-		            print "USER", user.latitude, user.longitude, user.mobile
-		            user_location = Point(user.latitude, user.longitude)
-		            if within_distance(user_location,location,15):
-		                send_to.append(user.mobile)
+        elif message.tag == "danger":
+            for user in all_users:
+                print "USER", user.latitude, user.longitude, user.mobile
+                user_location = Point(user.latitude, user.longitude)
+                if within_distance(user_location,location,15):
+                    send_to.append(user.mobile)
 
-		    elif message.tag == "local":
-		        for user in all_users:
-		            user_location = Point(user.latitude, user.longitude)
-		            if within_distance(user_location,location,3):
-		                send_to.append(user.mobile)
+        elif message.tag == "local":
+            for user in all_users:
+                user_location = Point(user.latitude, user.longitude)
+                #print "HERE1"
+                if within_distance(user_location,location,3):
+                    #print "HERE"
+                    send_to.append(user.mobile)
+                    #print send_to
 
-		    elif message.recipient == "teachers" and message.sender.user_type == "teacher":
-		        teachers = MobileUser.objects.filter(user_type = "teacher")
-		        for teacher in teachers:
-		            user_location = Point(teacher.latitude, teacher.longitude)
-		            if within_distance(user_location,location, 10):
-		                send_to.append(teacher.mobile)
+        elif message.recipient == "teachers" and message.sender.user_type == "teacher":
+            teachers = MobileUser.objects.filter(user_type = "teacher")
+            for teacher in teachers:
+                user_location = Point(teacher.latitude, teacher.longitude)
+                if within_distance(user_location,location, 10):
+                    send_to.append(teacher.mobile)
 
-		    elif message.recipient == "students" and message.sender.user_type == "teacher":
-		        students = MobileUser.objects.filter(user_type = "student")
-		        for student in students:
-		            user_location = Point(student.latitude, student.longitude)
-		            if within_distance(user_location,location, 10):
-		                send_to.append(student.mobile)
+        elif message.recipient == "students" and message.sender.user_type == "teacher":
+            students = MobileUser.objects.filter(user_type = "student")
+            for student in students:
+                user_location = Point(student.latitude, student.longitude)
+                if within_distance(user_location,location, 10):
+                    send_to.append(student.mobile)
 
-		    if len(send_to) > 0:
-		        msg = {'numbers': send_to, 'message': message.body + " @ " + message.location}
-		        MESSAGES_TO_SEND.append(msg)
+        if len(send_to) > 0:
+            msg = {'numbers': send_to, 'message': message.body + " @ " + message.location}
+            MESSAGES_TO_SEND.append(msg)
 
-		    return True
+	if len(MESSAGES_TO_SEND) == 0:
+	    return False
+    else:
+        return True
 
 
 def within_distance(p1, p2, d):
-    if distance.distance(p1,p2).kilometers <= d:
+    try:
+        if distance.distance(p1,p2).kilometers <= d:
+            return True
+        else:
+            return False
+    except:
         return True
-    else:
-        return False
 

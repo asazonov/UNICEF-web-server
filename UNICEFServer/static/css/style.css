@@ -88,12 +88,15 @@ h1,h2,h3,h4,a{
 
 #leftsidebar{
 	width:200px;
+	height:450px;
+	overflow:auto;
 	float:left;
 }
 
 #leftsidebar .item{
 	padding:5px;
 	background:#ccc;
+	cursor:pointer;
 	margin-bottom:10px;
 }
 
