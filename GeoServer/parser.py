@@ -2,11 +2,11 @@
 import string
 
 tags = [
-    "general",
-    "danger",
-    "local",
-    "update",
-    "message"
+    "students", # available to teachers; sends message to every student in the class
+    "teachers" # available to teachers; sends message to local teachers within 10 km
+    "danger", # available to everybody; sends message to everybody within 15 km or to everybody in the list if the location is not set
+    "local" # available to everybody; sends message to everybody within 3 km
+
 ]
 
 localityReferences = [
