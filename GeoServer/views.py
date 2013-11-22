@@ -34,7 +34,7 @@ def send(request):
 @csrf_exempt
 def check(request):
     if request.method == "GET":
-    	return str(TO_SEND)
+        return HttpResponse(str(TO_SEND).lower())
     	# if process():
      # 		return str(True)
      # 	else return str(False)
@@ -72,7 +72,7 @@ def receive(request):
             if place_country != unicode(SOUTH_SUDAN):
                 raise TypeError()
             new_message = Message(
-            	processed = False
+            	processed = False,
                 raw = data,
                 sender = mobile_user,
                 tag = tag,
@@ -91,7 +91,7 @@ def receive(request):
         except TypeError:
             place = raw_location
             new_message = Message(
-            	processed = False
+            	processed = False,
                 raw = data,
                 tag = tag,
                 message_body = message,
@@ -108,5 +108,5 @@ def process():
 	try:
 		message = Message.objects.filter(processed = False)
 		return True
-    except Message.DoesNotExistError:
-    	return False
+	except Message.DoesNotExistError:
+	    return False
