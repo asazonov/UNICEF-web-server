@@ -11,7 +11,7 @@ body{
 	font-family:Arial,Helvetica,sans-serif;
 	font-size:12px;
 	color:#000;
-	background:#ccc url('images/background-tile.png');
+	background:#ccc url('../images/background-tile.png');
 }
 
 h1,h2,h3,h4,a{
@@ -88,11 +88,55 @@ h1,h2,h3,h4,a{
 
 #leftsidebar{
 	width:200px;
-	padding:10px;
 	float:left;
 }
 
+#leftsidebar .item{
+	padding:5px;
+	background:#ccc;
+	margin-bottom:10px;
+}
+
+#leftsidebar .item.danger{
+	background:#FF9F9F;
+}
+
+#leftsidebar .item.local{
+	background:#E7D989;
+}
+
+#leftsidebar .item .map{
+	float:right;
+}
+
+#leftsidebar .item .from{
+	font-weight:bold;
+	font-size:16px;
+}
+
+#leftsidebar .item .messagebody{
+	font-size:12px;
+}
+
+#leftsidebar .item .operations{
+	text-align:center;
+	display:none;
+	margin:10px 0px;
+}
+
+#leftsidebar .item .operations a{
+	padding:5px;
+	background:#fff;
+	color:#000;
+}
+#leftsidebar .item .datetime{
+    font-size:10px;
+}
+
+
+
 #mapoutput{
+	background:#8c8c8c url('../images/loading.gif') no-repeat center center;
 	margin-left:210px;
 	width:auto;
 	height:450px;
