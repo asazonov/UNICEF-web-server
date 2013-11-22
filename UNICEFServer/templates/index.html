@@ -6,9 +6,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	
 	<!-- Stylesheets -->
-	<link type="text/css" rel="stylesheet" href="style.css"/>
-	<link type="text/css" rel="stylesheet" href="style-tablet.css" media="screen and (max-width: 900px) and (min-width: 671px)"/>
-	<link type="text/css" rel="stylesheet" href="style-phone.css" media="screen and (max-width: 670px)"/>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/style.css' %}"/>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/style-tablet.css' %}" media="screen and (max-width: 900px) and (min-width: 671px)"/>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/style-phone.css' %}" media="screen and (max-width: 670px)"/>
 	
 	<!-- JQuery -->
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -18,7 +18,7 @@
 	
 	
 	<!-- js-inbox.js -->
-	<script src="js-inbox.js"></script>
+    <script src="{% 'js/js-inbox.js' %}"></script>
 </head>
 <body>
 	<div id="container">
