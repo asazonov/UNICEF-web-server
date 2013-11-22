@@ -129,14 +129,11 @@ h1,h2,h3,h4,a{
 	background:#fff;
 	color:#000;
 }
-
-#leftsidebar #fade{
-	position:absolute;
-	bottom:0px;
-	left:0px;
-	height:20px;
-	background:url('../images/leftsidebarfade.png');
+#leftsidebar .item .datetime{
+    font-size:10px;
 }
+
+
 
 #mapoutput{
 	background:#8c8c8c url('../images/loading.gif') no-repeat center center;
