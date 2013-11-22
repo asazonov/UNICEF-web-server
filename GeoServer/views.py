@@ -121,18 +121,36 @@ def receive(request):
             place_country = place.split(', ')[-1]
             if place_country != unicode(SOUTH_SUDAN):
                 raise TypeError()
-            new_message = Message(
-            	processed = False,
-                raw = data,
-                sender = mobile_user,
-                tag = tag + ' ' + pm.getMessageRecipients(),
-                message_body = message,
-                message_time = datetime.now(),
-                location = place,
-                location_defined = True,
-                latitude = lat,
-                longitude = lng
-            )
+            msgRec = pm.getMessageRecipients()
+            if msgRec:
+                new_message = Message(
+                    processed = False,
+                    raw = data,
+                    sender = mobile_user,
+                    tag = tag,
+                    message_recipient = msgRec,
+                    message_body = message,
+                    message_time = datetime.now(),
+                    location = place,
+                    location_defined = True,
+                    latitude = lat,
+                    longitude = lng
+                )
+            else:
+                new_message = Message(
+                    processed = False,
+                    raw = data,
+                    sender = mobile_user,
+                    tag = tag,
+                    message_body = message,
+                    message_time = datetime.now(),
+                    location = place,
+                    location_defined = True,
+                    latitude = lat,
+                    longitude = lng
+                )
+
+
             mobile_user.location = place
             mobile_user.longitude = lng
             mobile_user.latitude = lat
@@ -140,16 +158,29 @@ def receive(request):
             mobile_user.save()
         except TypeError:
             place = raw_location
-            new_message = Message(
-            	processed = False,
-                raw = data,
-                tag = tag,
-                message_recipient = pm.getMessageRecipients(),
-                message_body = message,
-                message_time = datetime.now(),
-                location = place,
-                location_defined = False
-            )
+            msgRec = pm.getMessageRecipients()
+            if msgRec:
+                new_message = Message(
+                    processed = False,
+                    raw = data,
+                    tag = tag,
+                    message_recipient = pm.getMessageRecipients(),
+                    message_body = message,
+                    message_time = datetime.now(),
+                    location = place,
+                    location_defined = False
+                )
+            else:
+                new_message = Message(
+                    processed = False,
+                    raw = data,
+                    tag = tag,
+                    message_body = message,
+                    message_time = datetime.now(),
+                    location = place,
+                    location_defined = False
+                )
+
 
         new_message.save()
         print pm
