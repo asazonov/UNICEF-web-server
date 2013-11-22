@@ -24,6 +24,7 @@ class Message(models.Model):
     sender = models.ForeignKey(MobileUser)
     raw = models.CharField(max_length=500)
     tag = models.CharField(max_length=10)
+    message_recipient = models.CharField(max_length=20)
     message_body = models.CharField(max_length=10)
     message_time = models.DateTimeField(auto_now_add=True)
     location = models.CharField(max_length=200)
@@ -35,6 +36,7 @@ class Message(models.Model):
         return (
             "raw: " + self.raw + "\n" +
             "tag: " + self.tag + "\n" +
+            "recipient: " + self.message_recipient + "\n" +
             "location: " + self.location + "\n" +
             "latitude: " + self.latitude + "\n" +
             "longitude: " + self.longitude
