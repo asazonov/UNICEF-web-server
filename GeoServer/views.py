@@ -85,7 +85,9 @@ def send(request):
 @csrf_exempt
 def check(request):
     if request.method == "GET":
-        return HttpResponse(str(process(), status_code = 200)
+        pVal = process()
+        print pVal
+        return HttpResponse("true" if pVal else "false")
 
 @csrf_exempt
 def receive(request):
@@ -155,57 +157,58 @@ def receive(request):
 def process():
 		messages = Message.objects.filter(processed = False)
 		if not messages.exists():
-            return False
-        
-        all_users = MobileUser.objects.all()
-        
-        for message in messages:
-            message.processed = True
-            message.save()
-            send_to = []
+		    return False
 
-            message_location = Point(message.latitude, message.longitude)
+		all_users = MobileUser.objects.all()
 
+		for message in messages:
+		    message.processed = True
+		    message.save()
+		    send_to = []
 
-            if message.latitude is "" and message.longitude is "":
-                if(message.tag == "danger"):
-                    send_to = list(all_users)
-                    #do something with send_to
+		    message_location = Point(message.latitude, message.longitude)
 
+		    if message.latitude is "" and message.longitude is "":
+		        if(message.tag == "danger"):
+		            send_to = list(all_users)
+		            #do something with send_to
 
-            elif message.tag == "danger":
-                for user in all_users:
-                    user_location = Point(user.latitude, user.longitude)
-                    if within_distance(user_location,message_location,15):
-                        send_to.append(user.mobile)
+		    elif message.tag == "danger":
+		        for user in all_users:
+		            user_location = Point(user.latitude, user.longitude)
+		            if within_distance(user_location,message_location,15):
+		                send_to.append(user.mobile)
 
-            elif message.tag == "local":
-                for user in all_users:
-                    user_location = Point(user.latitude, user.longitude)
-                    if within_distance(user_location,message_location,3):
-                        send_to.append(user.mobile)
+		    elif message.tag == "local":
+		        for user in all_users:
+		            user_location = Point(user.latitude, user.longitude)
+		            if within_distance(user_location,message_location,3):
+		                send_to.append(user.mobile)
 
-            elif message.tag == "teachers" and message.sender.user_type = "teacher":
-                teachers = MobileUser.objects.filter(user_type = "teacher")
-                for teacher in teachers:
-                    user_location = Point(teacher.latitude, teacher.longitude)
-                    if within_distance(user_location,message_location, 10):
-                        send_to.append(teacher.mobile)
+		    elif message.tag == "teachers" and message.sender.user_type == "teacher":
+		        teachers = MobileUser.objects.filter(user_type = "teacher")
+		        for teacher in teachers:
+		            user_location = Point(teacher.latitude, teacher.longitude)
+		            if within_distance(user_location,message_location, 10):
+		                send_to.append(teacher.mobile)
 
-            elif message.tag == "students" and message.sender.user_type = "teacher":
-                students = MobileUser.objects.filter(user_type = "student")
-                for student in students:
-                    user_location = Point(student.latitude, student.longitude)
-                    if within_distance(user_location,message_location, 10):
-                        send_to.append(student.mobile)
+		    elif message.tag == "students" and message.sender.user_type == "teacher":
+		        students = MobileUser.objects.filter(user_type = "student")
+		        for student in students:
+		            user_location = Point(student.latitude, student.longitude)
+		            if within_distance(user_location,message_location, 10):
+		                send_to.append(student.mobile)
 
-            if len(send_to) > 0:
-                msg = {'numbers': send_to, 'message': message.message_body + " @" + message.location}
-                MESSAGES_TO_SEND.append(msg)
+		    if len(send_to) > 0:
+		        msg = {'numbers': send_to, 'message': message.message_body + " @" + message.location}
+		        MESSAGES_TO_SEND.append(msg)
+
+		    return True
 
 
 def within_distance(p1, p2, d):
     if distance.distance(p1,p2).kilometers <= d:
         return True
-    else False
+    else:
+        False
 

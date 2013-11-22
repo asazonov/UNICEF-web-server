@@ -91,14 +91,23 @@ title:"Hello World2!"
 
 	  }
 
-$('#leftsidebar .item').click(function(){
+window.onload = function() {
+    $('#leftsidebar').click(function(){
+        console.log(this);
     if($(this).attr('lat')!=null){
         newCenter = new google.maps.LatLng($(this).attr('lat'),$(this).attr('long'));
         map.setCenter(newCenter);
         map.setZoom(14);
     }
-});
+    });
+}
 
+function makeInfoWindowEvent(map, infowindow, contentString, marker) {
+    google.maps.event.addListener(marker, 'click', function() {
+        infowindow.setContent(contentString);
+        infowindow.open(map, marker);
+    });
+}
 
 // Process the click event on the messages
 $(document).ready(function(){

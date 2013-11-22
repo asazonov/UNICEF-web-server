@@ -2,11 +2,13 @@
 import string
 
 tags = [
-    "students", # available to teachers; sends message to every student in the class
-    "teachers" # available to teachers; sends message to local teachers within 10 km
-    "danger", # available to everybody; sends message to everybody within 15 km or to everybody in the list if the location is not set
-    "local" # available to everybody; sends message to everybody within 3 km
-
+    "message",
+    # available to everybody; sends message to everybody
+    # within 15 km or to everybody in the list if the location is not set
+    "danger",
+    # available to everybody; sends message to everybody within 3 km
+    "local",
+    "update"
 ]
 
 localityReferences = [
@@ -50,6 +52,8 @@ def parseMessage(incomingMessage):
                 return pMessage
             else:
                 return None
+        elif pMessage.getTag() == "update":
+            pMessage.setLocationDescriptor(" ".join(words[1:]))
         else:
             for i, word in enumerate(words[1:]):
                 if word in localityReferences:
