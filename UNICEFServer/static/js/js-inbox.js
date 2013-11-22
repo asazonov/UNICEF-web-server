@@ -1,5 +1,17 @@
 var map;
 
+
+function renderInboxUsers(data){
+    $.each(data,function(key,value){
+        new google.maps.Marker({
+            map:map,
+            position: new google.maps.LatLng(value.latitude,value.longitude),
+            icon:'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|666666|000000',
+            title:value.name
+        });
+    });
+}
+
 function renderInbox(data) {
     // Map options
     var mapOptions = {
@@ -66,14 +78,18 @@ function renderInbox(data) {
 	$('#leftsidebar div').click(function(){
 	    if($(this).attr('lat')){
 	        map.setCenter(new google.maps.LatLng($(this).attr('lat'),$(this).attr('long')));
-	        map.setZoom(14);
+	        map.setZoom(16);
         }
     });
+
+    // And fire off the second API call
+$.getJSON('/get_users/',renderInboxUsers);
+
 }
 
 function getInbox(){
 	$.getJSON('/get_messages/', renderInbox);
-}
+	}
 
 function initialize() {
         var mapOptions = {
