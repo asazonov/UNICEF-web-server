@@ -76,10 +76,11 @@ def getUsers(request):
 @csrf_exempt
 def send(request):
     if request.method == "GET":
-        if TO_SEND:
-        	return HttpResponse(
-        		json.dumps(MESSAGES_TO_SEND)
-        	)
+        resp = HttpResponse(
+            json.dumps(MESSAGES_TO_SEND)
+        )
+        MESSAGES_TO_SEND = list()
+        return resp
 
 
 @csrf_exempt
@@ -94,7 +95,7 @@ def receive(request):
     if request.method == POST:
         data = toDict(request.POST)
         pm = parser.parseMessage(data["sms_string"])
-
+        print pm
         if pm is None:
             return HttpResponse("Not working bro")
 
@@ -113,7 +114,6 @@ def receive(request):
         lat = None
         lng = None
         place = None
-
         try:
             place, (lat, lng) = geocoder.geocode(
                 raw_location + ', ' + SOUTH_SUDAN
@@ -137,7 +137,7 @@ def receive(request):
                     longitude = lng
                 )
             else:
-                if tag is not 'update':
+                if tag != 'update':
 	                new_message = Message(
 	                    processed = False,
 	                    raw = data,
@@ -153,9 +153,9 @@ def receive(request):
             mobile_user.location = place
             mobile_user.longitude = lng
             mobile_user.latitude = lat
-            mobile_user.location_updated = new_message.time
+            mobile_user.location_updated = datetime.now()
             mobile_user.save()
-            if tag is 'update':
+            if tag == 'update':
             	return HttpResponse(200)
         except TypeError:
             place = raw_location
@@ -172,17 +172,19 @@ def receive(request):
                     location_defined = False
                 )
             else:
-                new_message = Message(
-                    processed = False,
-                    raw = data,
-                    tag = tag,
-                    body = message,
-                    time = datetime.now(),
-                    location = place,
-                    location_defined = False
-                )
+                if tag != "update":
+                    new_message = Message(
+                        processed = False,
+                        raw = data,
+                        tag = tag,
+                        body = message,
+                        time = datetime.now(),
+                        location = place,
+                        location_defined = False
+                    )
+                else:
+                    return HttpResponse("No location bro")
         new_message.save()
-        print pm
     return HttpResponse(200)
 
 def process():
@@ -199,13 +201,14 @@ def process():
 
 		    location = Point(message.latitude, message.longitude)
 
-		    if message.latitude is "" and message.longitude is "":
+		    if message.latitude == "" and message.longitude == "":
 		        if(message.tag == "danger"):
-		            send_to = list(all_users)
+		            send_to = map(lambda user: user.mobile, all_users)
 		            #do something with send_to
 
 		    elif message.tag == "danger":
 		        for user in all_users:
+		            print "USER", user.latitude, user.longitude, user.mobile
 		            user_location = Point(user.latitude, user.longitude)
 		            if within_distance(user_location,location,15):
 		                send_to.append(user.mobile)
@@ -231,7 +234,7 @@ def process():
 		                send_to.append(student.mobile)
 
 		    if len(send_to) > 0:
-		        msg = {'numbers': send_to, 'message': message.body + " @" + message.location}
+		        msg = {'numbers': send_to, 'message': message.body + " @ " + message.location}
 		        MESSAGES_TO_SEND.append(msg)
 
 		    return True

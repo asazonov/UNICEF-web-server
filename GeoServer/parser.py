@@ -3,10 +3,7 @@ import string
 
 tags = [
     "message",
-    # available to everybody; sends message to everybody
-    # within 15 km or to everybody in the list if the location is not set
     "danger",
-    # available to everybody; sends message to everybody within 3 km
     "local",
     "update"
 ]
@@ -54,6 +51,7 @@ def parseMessage(incomingMessage):
                 return None
         elif pMessage.getTag() == "update":
             pMessage.setLocationDescriptor(" ".join(words[1:]))
+            return pMessage
         else:
             for i, word in enumerate(words[1:]):
                 if word in localityReferences:
@@ -122,7 +120,7 @@ def test_parseMessage():
     #     "coming this way near the awesome village"
     # )
 
-    message = "message students hey everybody"
+    message = "update canary wharf"
     print "Message:", message
     pm = parseMessage(message)
     print pm
