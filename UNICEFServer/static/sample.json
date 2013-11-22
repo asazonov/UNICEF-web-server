@@ -1,0 +1,29 @@
+[{
+	"messageID": 1,
+	"senderName": "John Smith",
+	"senderNumber": "07889466132",
+	"messageBody": "DANGER rebels near Juba University",
+	"flag": "danger",
+	"lat": 4.8380,
+	"long": 31.5842,
+	"sentConfirmation": "Relayed to all users.",
+	"messageUnread": true
+},
+{
+	"messageID": 2,
+	"senderName": "John Smith",
+	"senderNumber": "07889466132",
+	"messageBody": "I will not be in class today",
+	"messageUnread": true
+},
+{
+	"messageID": 3,
+	"senderName": "Mike Jones",
+	"senderNumber": "07203339783",
+	"messageBody": "LOCAL free hot dogs at my place",
+	"flag": "local",
+	"lat": 4.8280,
+	"long": 31.5242,
+	"sentConfirmation": "Relayed to local users.",
+	"messageUnread": false
+}]
