@@ -15,7 +15,7 @@ function renderInbox(data){
 	$.each(JSONdata,function(key,value){
 		// For each inbox item
 		// Populate a property array
-		message[];
+		//message[];
 		$.each(value,function(key,value){
 			message[key] = value;
 			});
@@ -57,7 +57,7 @@ title:"Hello World2!"
 
 // Process the click event on the messages
 $(document).ready(function(){
-	setTimeout('getInbox()',1000);
+	setTimeout('initialize()',1000);
 	$('#leftsidebar .item').click(function(){
 		if($(this).attr('lat')!=null){
 			newCenter = new google.maps.LatLng($(this).attr('lat'),$(this).attr('long'));

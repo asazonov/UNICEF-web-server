@@ -11,7 +11,7 @@ body{
 	font-family:Arial,Helvetica,sans-serif;
 	font-size:12px;
 	color:#000;
-	background:#ccc url('images/background-tile.png');
+	background:#ccc url('../images/background-tile.png');
 }
 
 h1,h2,h3,h4,a{
@@ -135,11 +135,11 @@ h1,h2,h3,h4,a{
 	bottom:0px;
 	left:0px;
 	height:20px;
-	background:url('images/leftsidebarfade.png');
+	background:url('../images/leftsidebarfade.png');
 }
 
 #mapoutput{
-	background:#8c8c8c url('images/loading.gif') no-repeat center center;
+	background:#8c8c8c url('../images/loading.gif') no-repeat center center;
 	margin-left:210px;
 	width:auto;
 	height:450px;

@@ -1,6 +1,10 @@
+
+{% load staticfiles %}
+
 <!DOCTYPE HTML>
 <html>
-<head>
+    <head>
+    <title>Team Awesome</title>
 	<!-- META -->
 	<title></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -18,12 +22,12 @@
 	
 	
 	<!-- js-inbox.js -->
-    <script src="{% 'js/js-inbox.js' %}"></script>
+    <script src="{% static 'js/js-inbox.js' %}"></script>
 </head>
 <body>
 	<div id="container">
 		<div id="header">
-			<img id="logo" src="images/logo.png"/>
+            <img id="logo" src="{% static 'images/logo.png' %}"/>
 			
 			<div id="nav">
 				<a class="item" href="#">Inbox</a>
